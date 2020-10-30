@@ -1,2 +1,2 @@
-# cmdcalc
+# cmdCalc
 Command-line calculator in C++.
