@@ -13,8 +13,8 @@
 
 namespace CalcEval
 {
-    Token::Token(TokenType type, const Location& loc, std::string value)
-        : type{type}, value{std::move(value)}, location{loc}
+    Token::Token(TokenType type, const Location& loc, const std::string& value)
+        : type{type}, value{value}, location{loc}
     {
     }
 

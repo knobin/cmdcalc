@@ -8,15 +8,42 @@
 #ifndef CALCEVAL_PARSER_HPP
 #define CALCEVAL_PARSER_HPP
 
+// Local Headers
+#include "calceval/Scanner.hpp"
+
+// C++ Headers
+#include <iostream>
+
 namespace CalcEval
 {
     class Parser
     {
     public:
-        Parser() = default;
+        Parser() = delete;
+        explicit Parser(std::istream& is = std::cin) : m_scanner{is} {}
+
+        double parse();
 
     private:
+        void scan();
+        double expr();
+        double exprTail(double lhs);
+        double term();
+        double termTail(double lhs);
+        double factor();
+        double unary();
+        double value();
+        double id();
 
+    private:
+        Scanner m_scanner;
+        Token m_token{TokenType::EndMark, {0,0}, ""};
+    };
+
+    class ParserError : public std::logic_error
+    {
+    public:
+        using std::logic_error::logic_error;
     };
 
 } // namespace CalcEval

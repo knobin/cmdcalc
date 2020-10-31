@@ -41,13 +41,14 @@ namespace CalcEval
     {
     public:
         Token() = delete;
-        explicit Token(TokenType type, const Location& loc, std::string value = "");
+        Token(TokenType type, const Location& loc, const std::string& value);
+        ~Token() = default;
 
         void print(std::ostream& os) const;
 
-        const TokenType type;
-        const std::string value;
-        const Location location;
+        TokenType type;
+        std::string value;
+        Location location;
     };
 
     [[nodiscard]] std::string tokenStr(TokenType type);

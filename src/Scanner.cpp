@@ -23,14 +23,14 @@ namespace CalcEval
     {
         if (m_stream.eof())
         {
-            return Token{TokenType::EndMark, m_cLoc};
+            return Token{TokenType::EndMark, m_cLoc, ""};
         }
 
         m_next = m_stream.peek();
 
         if (ignoreWhitespaces())
         {
-            return Token(TokenType::EndOfLine, m_cLoc);
+            return Token(TokenType::EndOfLine, m_cLoc, "");
         }
 
         if (std::isalpha(m_next))
@@ -62,7 +62,7 @@ namespace CalcEval
             }
         }
 
-        return Token{TokenType::Bad, m_cLoc};
+        return Token{TokenType::Bad, m_cLoc, ""};
     }
 
     bool Scanner::ignoreWhitespaces()
