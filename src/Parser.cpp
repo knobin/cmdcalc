@@ -1,14 +1,14 @@
 //
 //  Parser.cpp
-//  calcParser
+//  CalcEval
 //
 //  Created by Robin Gustafsson on 2020-10-30.
 //
 
 // Local Headers
-#include "calcparser/Parser.hpp"
+#include "calceval/Parser.hpp"
 
-namespace CalcParser
+namespace CalcEval
 {
 
-} // CalcParser
+} // namespace CalcEval

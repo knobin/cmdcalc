@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15.7)
-project(calcParser-tests)
+project(CalcEval-tests)
 
 # Function for define tests.
 function(define_test)

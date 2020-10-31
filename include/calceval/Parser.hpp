@@ -1,14 +1,14 @@
 //
 //  Parser.hpp
-//  calcParser
+//  CalcEval
 //
 //  Created by Robin Gustafsson on 2020-10-30.
 //
 
-#ifndef CALCPARSER_PARSER_HPP
-#define CALCPARSER_PARSER_HPP
+#ifndef CALCEVAL_PARSER_HPP
+#define CALCEVAL_PARSER_HPP
 
-namespace CalcParser
+namespace CalcEval
 {
     class Parser
     {
@@ -19,6 +19,6 @@ namespace CalcParser
 
     };
 
-} // CalcParser
+} // namespace CalcEval
 
-#endif // CALCPARSER_PARSER_HPP
+#endif // CALCEVAL_PARSER_HPP

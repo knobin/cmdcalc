@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.15.7)
-project(calcParser)
+project(CalcEval)
 
 # Source files
-set(SOURCE_FILES parser.cpp)
+set(SOURCE_FILES Parser.cpp Scanner.cpp Token.cpp)
 
 # Define library
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
