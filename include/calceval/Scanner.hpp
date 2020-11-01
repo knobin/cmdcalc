@@ -28,12 +28,18 @@ namespace CalcEval
         bool ignoreWhitespaces();
         std::string readIdentifier();
         std::string readDigit();
-        std::pair<char, TokenType> readSingle();
+        std::pair<char, TokenType> readSymbol();
 
     private:
         std::istream& m_stream;
         Location m_cLoc{1, 1};
         int m_next{0};
+    };
+
+    class ScannerError : public std::logic_error
+    {
+    public:
+        using std::logic_error::logic_error;
     };
 
 } // namespace CalcEval

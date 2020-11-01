@@ -11,16 +11,13 @@
 // Local Headers
 #include "calceval/Scanner.hpp"
 
-// C++ Headers
-#include <iostream>
-
 namespace CalcEval
 {
     class Parser
     {
     public:
         Parser() = delete;
-        explicit Parser(std::istream& is = std::cin) : m_scanner{is} {}
+        explicit Parser(std::istream& is) : m_scanner{is} {}
 
         double parse();
 

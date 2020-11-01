@@ -10,7 +10,6 @@
 
 // C++ Headers
 #include <array>
-#include <iostream>
 #include <utility>
 
 namespace CalcEval
@@ -39,6 +38,12 @@ namespace CalcEval
             std::string identifier{readIdentifier()};
             if (!identifier.empty())
             {
+                if (std::isalpha(m_stream.peek()))
+                {
+                    throw ScannerError("Unexpected character at {" + std::to_string(m_cLoc.line) +
+                                       ", " + std::to_string(m_cLoc.column) + "}");
+                }
+
                 return Token(TokenType::Identifier, {m_cLoc.line, col}, identifier);
             }
         }
@@ -48,17 +53,29 @@ namespace CalcEval
             std::string digit{readDigit()};
             if (!digit.empty())
             {
+                if (std::isdigit(m_stream.peek()))
+                {
+                    throw ScannerError("Unexpected digit at {" + std::to_string(m_cLoc.line) +
+                                       ", " + std::to_string(m_cLoc.column) + "}");
+                }
+
                 return Token(TokenType::Number, {m_cLoc.line, col}, digit);
             }
         }
         else
         {
             // '+', '-', '*', '/', etc
-            std::pair<char, TokenType> single{readSingle()};
-            if (single.second != TokenType::Bad)
+            std::pair<char, TokenType> symbol{readSymbol()};
+            if (symbol.second != TokenType::Bad)
             {
                 return Token{
-                    single.second, {m_cLoc.line, m_cLoc.column - 1}, std::string{single.first}};
+                    symbol.second, {m_cLoc.line, m_cLoc.column - 1}, std::string{symbol.first}};
+            }
+            else
+            {
+                throw ScannerError("Unexpected symbol '" + std::string{symbol.first} +
+                                   "' at line " + std::to_string(m_cLoc.line) + ", column " +
+                                   std::to_string(m_cLoc.column - 1));
             }
         }
 
@@ -106,22 +123,40 @@ namespace CalcEval
     {
         double val{0};
         std::istream::pos_type aPos{m_stream.tellg()};
+
+        // First see if we can read a double.
         if (m_stream >> val)
         {
+            // To preserve the precision since we store values in a string (to_string has
+            // a set precision), we read the value again with seekg and read to store it in
+            // string directly.
             std::istream::pos_type bPos{m_stream.tellg()};
-            if (bPos != -1 && bPos > aPos)
-                m_cLoc.column += static_cast<std::size_t>(bPos - aPos);
 
-            return std::to_string(val);
+            if (bPos == -1)
+            {
+                m_stream.clear();
+                m_stream.seekg(0, std::istream::end);
+                bPos = m_stream.tellg();
+            }
+
+            if (bPos > aPos)
+            {
+                std::istream::pos_type length{bPos - aPos};
+                std::string str(length, '\0');
+                m_stream.seekg(aPos);
+                m_stream.read(&str[0], length);
+                m_cLoc.column += static_cast<std::size_t>(length);
+                return str;
+            }
         }
 
         return "";
     }
 
-    std::pair<char, TokenType> Scanner::readSingle()
+    std::pair<char, TokenType> Scanner::readSymbol()
     {
-        char single{};
-        if (m_stream >> single)
+        char symbol{};
+        if (m_stream >> symbol)
         {
             ++m_cLoc.column;
             constexpr std::array<std::pair<char, TokenType>, 7> toMatch{
@@ -130,12 +165,12 @@ namespace CalcEval
                 std::pair{'^', TokenType::Power},     std::pair{'(', TokenType::LeftParen},
                 std::pair{')', TokenType::RightParen}};
             auto found = std::find_if(toMatch.cbegin(), toMatch.cend(),
-                                      [&](const auto& pair) { return pair.first == single; });
+                                      [&](const auto& pair) { return pair.first == symbol; });
             if (found != toMatch.cend())
                 return *found;
         }
 
-        return {'\0', TokenType::Bad};
+        return {symbol, TokenType::Bad};
     }
 
 } // namespace CalcEval

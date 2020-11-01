@@ -8,9 +8,6 @@
 // Local Headers
 #include "calceval/Parser.hpp"
 
-// C++ Headers
-#include <iostream>
-
 namespace CalcEval
 {
     void Parser::scan()
@@ -30,8 +27,9 @@ namespace CalcEval
             val = expr();
 
         scan();
+
         if (m_token.type != TokenType::EndMark)
-            std::cout << "There are symbols left!" << std::endl;
+            throw ParserError("There are symbols left to parse!");
 
         return val;
     }
@@ -133,6 +131,7 @@ namespace CalcEval
         }
         else if (m_token.type == TokenType::Number)
         {
+            // std::stod might be a problem for precision here.
             val = std::stod(m_token.value);
         }
         else

@@ -8,9 +8,6 @@
 // Local Headers
 #include "calceval/Token.hpp"
 
-// C++ Headers
-#include <utility>
-
 namespace CalcEval
 {
     Token::Token(TokenType type, const Location& loc, const std::string& value)
