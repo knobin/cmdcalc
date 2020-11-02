@@ -3,45 +3,57 @@
 
 // C++ Headers
 #include <iostream>
+#include <optional>
 #include <sstream>
 
-
-void parse(CalcEval::Parser parser, const std::string& expr)
+std::optional<double> parse(const std::string& expr)
 {
     try
     {
-        double val = parser.parse();
-        std::cout << "Parsed \"" << expr << "\" = " << val << std::endl;
+        std::istringstream iss{expr};
+        CalcEval::Parser parser{iss};
+        return parser.parse();
     }
     catch (CalcEval::ParserError& e)
     {
-        std::cerr << "Error parsing \"" << expr << "\"!\n" << e.what() << std::endl;
+        std::cerr << "Error parsing!\n" << e.what() << std::endl;
     }
     catch (CalcEval::ScannerError& e)
     {
-        std::cerr << "Error scanning \"" << expr << "\"!\n" << e.what() << std::endl;
+        std::cerr << "Error scanning!\n" << e.what() << std::endl;
     }
+
+    return std::nullopt;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    std::cout << "========== Parse args ==========" << std::endl;
-
-    // The arguments are treated as one expression per line here.
-    // Although, expressions can be multiline as the parser ignores line breaks.
-    for (int i{1}; i < argc; ++i)
+    if (argc == 1)
     {
-        std::stringstream expr{argv[i]};
-        CalcEval::Parser p1{expr};
-        parse(p1, expr.str());
+        // REPL
+        // Every line will be evaluated on its own.
+        std::cout << "> " << std::flush;
+        std::string line;
+        while (std::getline(std::cin, line))
+        {
+            if (auto val = parse(line))
+            {
+                std::cout << *val << std::endl;
+            }
+            std::cout << "> " << std::flush;;
+        }
     }
-
-    std::cout << "========== Parse str ==========" << std::endl;
-
-    std::string toParse{"pi*pi+1.0000001+10+1+2+1.0000001"};
-    std::stringstream ss{toParse};
-    CalcEval::Parser p2{ss};
-    parse(p2, toParse);
+    else if (argc > 1)
+    {
+        // Evaluate each expression arguments.
+        for (int i{1}; i < argc; ++i)
+        {
+            if (auto val = parse(argv[i]))
+            {
+                std::cout << *val << std::endl;
+            }
+        }
+    }
 
     return 0;
 }
