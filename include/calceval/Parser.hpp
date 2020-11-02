@@ -17,6 +17,32 @@ namespace CalcEval
 
         Object that implements the logic for the calculator syntax.
         Throws ParserError when an error is encountered.
+
+        Logic is:
+        <expr> ::= <term><expr_tail>
+
+        <expr_tail> ::= +<term><expr_tail>
+            |   -<term><expr_tail>
+            |   <empty>
+
+        <term> ::= <factor><term_tail>
+
+        <term_tail> ::= *<factor><term_tail>
+            |   /<factor><term_tail>
+            |   <empty>
+
+        <factor> ::= <unary> ^ <unary>
+                |	<unary>
+
+        <unary> ::= -<value>
+                |	<value>
+
+        <value> ::= ( <expr> )
+                | 	<id>
+                | 	num
+
+        <id> ::= function <value>
+                | 	constant
     */
     class Parser
     {
@@ -60,17 +86,11 @@ namespace CalcEval
 
         /** Function starting the expr.
 
-            Logic: <expr> ::= <term><expr_tail>
-
             @return     resulting value
         */
         double expr();
 
         /** Function for the expr_tail.
-
-            Logic: <expr_tail> ::= +<term><expr_tail>
-                        |   -<term><expr_tail>
-                        |   <empty>
 
             @param  lhs     lhs of the expr
             @return         resulting value
@@ -79,17 +99,11 @@ namespace CalcEval
 
         /** Function for the term.
 
-            Logic: <term> ::= <factor><term_tail>
-
             @return     resulting value
         */
         double term();
 
         /** Function for the term_tail.
-
-            Logic: <term_tail> ::= *<factor><term_tail>
-                        |   /<factor><term_tail>
-                        |   <empty>
 
             @param  lhs     lhs of the term
             @return         resulting value
@@ -98,17 +112,11 @@ namespace CalcEval
 
         /** Function for the term_tail.
 
-            Logic: <factor> ::= <unary> ^ <unary>
-                        |   <unary>
-
             @return     resulting value
         */
         double factor();
 
         /** Function for the unary.
-
-            Logic: <unary> ::= -<value>
-                    |   <value>
 
             @return     resulting value
         */
@@ -116,18 +124,11 @@ namespace CalcEval
 
         /** Function for the value.
 
-            Logic: <value> ::= ( <expr> )
-                        |   <id>
-                        |   num
-
             @return     resulting value
         */
         double value();
 
         /** Function for the id.
-
-            Logic: <id> ::= function <value>
-                      |   constant
 
             @return     resulting value
         */
