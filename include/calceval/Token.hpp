@@ -51,7 +51,7 @@ namespace CalcEval
         Location location;
     };
 
-    [[nodiscard]] std::string tokenStr(TokenType type);
+    [[nodiscard]] constexpr std::string_view tokenStr(TokenType type);
     std::ostream& operator<<(std::ostream& os, const Token& token);
 
 } // namespace CalcEval

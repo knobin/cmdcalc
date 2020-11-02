@@ -14,10 +14,6 @@
 
 namespace CalcEval
 {
-    Scanner::Scanner(std::istream& is) : m_stream{is}
-    {
-    }
-
     Token Scanner::scan()
     {
         if (m_stream.eof())

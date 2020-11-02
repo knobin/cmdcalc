@@ -20,7 +20,7 @@ namespace CalcEval
     {
     public:
         Scanner() = delete;
-        explicit Scanner(std::istream& is);
+        explicit Scanner(std::istream& is) : m_stream{is} {}
 
         [[nodiscard]] Token scan();
 

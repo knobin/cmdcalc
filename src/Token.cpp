@@ -25,7 +25,7 @@ namespace CalcEval
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    std::string tokenStr(TokenType type)
+    constexpr std::string_view tokenStr(TokenType type)
     {
         switch (type)
         {
