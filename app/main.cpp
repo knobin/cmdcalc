@@ -50,9 +50,7 @@ int main(int argc, char* argv[])
         {
             if (auto val = parse(argv[i]))
             {
-                std::cout << *val;
-                if (i < (argc-1))
-                    std::cout << std::endl;
+                std::cout << *val << std::endl;
             }
         }
     }
