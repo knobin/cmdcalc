@@ -42,6 +42,8 @@ int main(int argc, char* argv[])
             }
             std::cout << "> " << std::flush;;
         }
+
+        std::cout << std::endl;
     }
     else if (argc > 1)
     {
