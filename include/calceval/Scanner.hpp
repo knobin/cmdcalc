@@ -108,7 +108,6 @@ namespace CalcEval
 
             @param  unexpected      what was unexpected
             @param  location        the location it was encountered on
-            @return     char with associated TokenType, Bad if error
         */
         void error(const std::string& unexpected, const Location& location) const;
 
