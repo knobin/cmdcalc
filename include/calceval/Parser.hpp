@@ -17,7 +17,9 @@ namespace CalcEval
     {
     public:
         Parser() = delete;
-        explicit Parser(std::istream& is) : m_scanner{is} {}
+        explicit Parser(std::istream& is) : m_scanner{is}
+        {
+        }
 
         double parse();
 
@@ -32,9 +34,11 @@ namespace CalcEval
         double value();
         double id();
 
+        void error(const Token& token, const std::string& expected) const;
+
     private:
         Scanner m_scanner;
-        Token m_token{TokenType::EndMark, {0,0}, ""};
+        Token m_token{TokenType::EndMark, {0, 0}, ""};
     };
 
     class ParserError : public std::logic_error

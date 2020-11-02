@@ -10,18 +10,19 @@
 
 // C++ Headers
 #include <array>
+#include <iostream>
 #include <utility>
 
 namespace CalcEval
 {
     Token Scanner::scan()
     {
-        if (m_stream.eof())
+        m_next = m_stream.peek();
+
+        if (m_stream.eof() || m_next < 0)
         {
             return Token{TokenType::EndMark, m_cLoc, ""};
         }
-
-        m_next = m_stream.peek();
 
         if (ignoreWhitespaces())
         {
@@ -36,8 +37,7 @@ namespace CalcEval
             {
                 if (std::isalpha(m_stream.peek()))
                 {
-                    throw ScannerError("Unexpected character at {" + std::to_string(m_cLoc.line) +
-                                       ", " + std::to_string(m_cLoc.column) + "}");
+                    error("character", m_cLoc);
                 }
 
                 return Token(TokenType::Identifier, {m_cLoc.line, col}, identifier);
@@ -51,8 +51,7 @@ namespace CalcEval
             {
                 if (std::isdigit(m_stream.peek()))
                 {
-                    throw ScannerError("Unexpected digit at {" + std::to_string(m_cLoc.line) +
-                                       ", " + std::to_string(m_cLoc.column) + "}");
+                    error("digit", m_cLoc);
                 }
 
                 return Token(TokenType::Number, {m_cLoc.line, col}, digit);
@@ -69,9 +68,7 @@ namespace CalcEval
             }
             else
             {
-                throw ScannerError("Unexpected symbol '" + std::string{symbol.first} +
-                                   "' at line " + std::to_string(m_cLoc.line) + ", column " +
-                                   std::to_string(m_cLoc.column - 1));
+                error("symbol", {m_cLoc.line, m_cLoc.column - 1});
             }
         }
 
@@ -101,7 +98,9 @@ namespace CalcEval
 
     std::string Scanner::readIdentifier()
     {
+        // We have at least one std::isalpha here.
         std::string val{};
+        int next{-1};
         do
         {
             char c = ' ';
@@ -110,7 +109,9 @@ namespace CalcEval
                 val += c;
                 ++m_cLoc.column;
             }
-        } while (std::isalpha(m_stream.peek()));
+            // Maybe check for error here?
+            next = m_stream.peek();
+        } while (std::isalpha(next) || std::isdigit(next));
 
         return val;
     }
@@ -167,6 +168,58 @@ namespace CalcEval
         }
 
         return {symbol, TokenType::Bad};
+    }
+
+    void Scanner::error(const std::string& unexpected, const Location& location) const
+    {
+        throw ScannerError(errorMsg(unexpected, currentLine(), location));
+    }
+
+    std::string Scanner::currentLine() const
+    {
+        // Save current position
+        std::istream::pos_type pos{m_stream.tellg()};
+        if (pos == -1)
+        {
+            m_stream.clear();
+            m_stream.seekg(0, std::istream::end);
+            pos = m_stream.tellg();
+        }
+
+        // Find '\n' or beginning
+        int prevChar{0};
+        std::istream::pos_type currPos{pos};
+        do
+        {
+            m_stream.seekg(-1, std::istream::cur);
+            currPos = m_stream.tellg();
+            prevChar = m_stream.get();
+            m_stream.seekg(-1, std::istream::cur);
+        } while (prevChar != '\n' && currPos > 0);
+
+        // Could find "end" here as well to get the whole line instead of just the beginning.
+
+        // Retrieve line
+        std::istream::pos_type length{pos - currPos};
+        std::string line(length, '\0');
+        m_stream.seekg(currPos);
+        m_stream.read(&line[0], length);
+
+        m_stream.seekg(pos); // return to old pos
+
+        return line;
+    }
+
+    std::string errorMsg(const std::string& unexpected, const std::string& line,
+                         const Location& location)
+    {
+        return {"Unexpected " + unexpected + " at line " + std::to_string(location.line) + " : " +
+                std::to_string(location.column) + "\n" + errorFromLine(line, location.column)};
+    }
+
+    std::string errorFromLine(const std::string& line, std::size_t at)
+    {
+        return line + '\n' + ((at > 1) ? std::string(at - 1, '-') : "") + "^\n";
     }
 
 } // namespace CalcEval

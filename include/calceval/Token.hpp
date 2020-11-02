@@ -10,8 +10,8 @@
 
 // C++ Headers
 #include <cstdint>
-#include <string>
 #include <ostream>
+#include <string>
 
 namespace CalcEval
 {

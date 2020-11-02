@@ -8,6 +8,12 @@
 // Local Headers
 #include "calceval/Parser.hpp"
 
+// C++ Headers
+#include <array>
+#include <cmath>
+#include <functional>
+#include <utility>
+
 namespace CalcEval
 {
     void Parser::scan()
@@ -24,22 +30,28 @@ namespace CalcEval
         scan();
 
         if (m_token.type != TokenType::Bad)
+        {
             val = expr();
-
-        scan();
+        }
 
         if (m_token.type != TokenType::EndMark)
-            throw ParserError("There are symbols left to parse!");
+        {
+            error(m_token, "");
+        }
 
         return val;
     }
 
+    // <expr> ::= <term><expr_tail>
     double Parser::expr()
     {
         double lhs{term()};
         return exprTail(lhs);
     }
 
+    // <expr_tail> ::= +<term><expr_tail>
+    //      |   -<term><expr_tail>
+    //      |   <empty>
     double Parser::exprTail(double lhs)
     {
         double val{lhs};
@@ -60,12 +72,16 @@ namespace CalcEval
         return val;
     }
 
+    // <term> ::= <factor><term_tail>
     double Parser::term()
     {
         double lhs{factor()};
         return termTail(lhs);
     }
 
+    // <term_tail> ::= *<factor><term_tail>
+    //      |   /<factor><term_tail>
+    //      |   <empty>
     double Parser::termTail(double lhs)
     {
         double val{lhs};
@@ -86,6 +102,8 @@ namespace CalcEval
         return val;
     }
 
+    // <factor> ::= <unary> ^ <unary>
+    //      |	<unary>
     double Parser::factor()
     {
         double val{unary()};
@@ -99,6 +117,8 @@ namespace CalcEval
         return val;
     }
 
+    // <unary> ::= -<value>
+    //      |   <value>
     double Parser::unary()
     {
         int8_t multi{1};
@@ -112,6 +132,9 @@ namespace CalcEval
         return value() * multi;
     }
 
+    // <value> ::= ( <expr> )
+    //      |   <id>
+    //      | 	num
     double Parser::value()
     {
         double val{0};
@@ -122,7 +145,7 @@ namespace CalcEval
             val = expr();
             if (m_token.type != TokenType::RightParen)
             {
-                throw ParserError("Expected ')'!");
+                error(m_token, "')'");
             }
         }
         else if (m_token.type == TokenType::Identifier)
@@ -136,50 +159,67 @@ namespace CalcEval
         }
         else
         {
-            throw ParserError("Unexpected token!");
+            error(m_token, "'(', identifier or number");
         }
 
         scan();
         return val;
     }
 
+    // <id> ::= function <value>
+    //      |   constant
     double Parser::id()
     {
-        std::string str{m_token.value};
+        Token token{m_token};
+        std::string_view str{token.value};
         scan();
 
-        if (m_token.type != TokenType::LeftParen)
+        // Expect a constant
+        if (m_token.type != TokenType::LeftParen && token.type == TokenType::Identifier)
         {
             if (str == "pi")
                 return 3.14159265;
             else if (str == "e")
                 return 2.71828183;
-
-            throw ParserError("No constant named \"" + str + "\" found!");
         }
 
-        if (str == "log")
-            return std::log(value());
-        if (str == "log10")
-            return std::log10(value());
-        if (str == "exp")
-            return std::exp(value());
-        if (str == "sin")
-            return std::sin(value());
-        if (str == "cos")
-            return std::cos(value());
-        if (str == "tan")
-            return std::tan(value());
-        if (str == "arcsin")
-            return std::asin(value());
-        if (str == "arccos")
-            return std::acos(value());
-        if (str == "arctan")
-            return std::atan(value());
+        const std::array<std::pair<std::string_view, std::function<double(double)>>, 9> funcArr{
+            std::pair{"log", [](double x) { return std::log(x); }},
+            std::pair{"log10", [](double x) { return std::log10(x); }},
+            std::pair{"exp", [](double x) { return std::exp(x); }},
+            std::pair{"sin", [](double x) { return std::sin(x); }},
+            std::pair{"cos", [](double x) { return std::cos(x); }},
+            std::pair{"tan", [](double x) { return std::tan(x); }},
+            std::pair{"arcsin", [](double x) { return std::asin(x); }},
+            std::pair{"arccos", [](double x) { return std::acos(x); }},
+            std::pair{"atan", [](double x) { return std::atan(x); }}};
 
-        throw ParserError("No function named \"" + str + "\" found!");
+        // Is str a function?
+        auto found = std::find_if(funcArr.cbegin(), funcArr.cend(),
+                                  [&](const auto& pair) { return pair.first == str; });
+        if (found != funcArr.cend())
+        {
+            if (m_token.type == TokenType::LeftParen)
+            {
+                // Should be a valid function here.
+                // value() might fail, but that is a valid error.
+                return found->second(value());
+            }
 
+            // it is a function but missing its starting parentheses.
+            error(m_token, "'('");
+        }
+
+        // Neither error or function, since '(' is not found we expect a constant.
+        error(token, "constant: \"pi\" or \"e\"");
         return 0;
+    }
+
+    void Parser::error(const Token& token, const std::string& expected) const
+    {
+        const std::string unexpected{"token of \"" + std::string{tokenStr(token.type)}};
+        throw ParserError(errorMsg(unexpected, m_scanner.currentLine(), token.location) +
+                          ((!expected.empty()) ? "Expected " + expected + "!" : ""));
     }
 
 } // namespace CalcEval
