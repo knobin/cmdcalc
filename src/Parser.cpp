@@ -10,7 +10,6 @@
 
 // C++ Headers
 #include <array>
-#include <cmath>
 #include <functional>
 #include <utility>
 
@@ -45,7 +44,7 @@ namespace CalcEval
     // <expr> ::= <term><expr_tail>
     double Parser::expr()
     {
-        double lhs{term()};
+        const double lhs{term()};
         return exprTail(lhs);
     }
 
@@ -75,7 +74,7 @@ namespace CalcEval
     // <term> ::= <factor><term_tail>
     double Parser::term()
     {
-        double lhs{factor()};
+        const double lhs{factor()};
         return termTail(lhs);
     }
 
@@ -170,8 +169,8 @@ namespace CalcEval
     //      |   constant
     double Parser::id()
     {
-        Token token{m_token};
-        std::string_view str{token.value};
+        const Token token{m_token};
+        const std::string_view str{token.value};
         scan();
 
         // Expect a constant
@@ -195,7 +194,7 @@ namespace CalcEval
             std::pair{"atan", [](double x) { return std::atan(x); }}};
 
         // Is str a function?
-        auto found = std::find_if(funcArr.cbegin(), funcArr.cend(),
+        const auto found = std::find_if(funcArr.cbegin(), funcArr.cend(),
                                   [&](const auto& pair) { return pair.first == str; });
         if (found != funcArr.cend())
         {
@@ -217,7 +216,7 @@ namespace CalcEval
 
     void Parser::error(const Token& token, const std::string& expected) const
     {
-        const std::string unexpected{"token of \"" + std::string{tokenStr(token.type)}};
+        const std::string unexpected{"token of \"" + std::string{tokenStr(token.type)} + "\""};
         throw ParserError(errorMsg(unexpected, m_scanner.currentLine(), token.location) +
                           ((!expected.empty()) ? "Expected " + expected + "!" : ""));
     }

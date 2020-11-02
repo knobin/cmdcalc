@@ -10,7 +10,6 @@
 
 // C++ Headers
 #include <array>
-#include <iostream>
 #include <utility>
 
 namespace CalcEval
@@ -31,8 +30,8 @@ namespace CalcEval
 
         if (std::isalpha(m_next))
         {
-            std::size_t col{m_cLoc.column};
-            std::string identifier{readIdentifier()};
+            const std::size_t col{m_cLoc.column};
+            const std::string identifier{readIdentifier()};
             if (!identifier.empty())
             {
                 if (std::isalpha(m_stream.peek()))
@@ -45,8 +44,8 @@ namespace CalcEval
         }
         else if (std::isdigit(m_next))
         {
-            std::size_t col{m_cLoc.column};
-            std::string digit{readDigit()};
+            const std::size_t col{m_cLoc.column};
+            const std::string digit{readDigit()};
             if (!digit.empty())
             {
                 if (std::isdigit(m_stream.peek()))
@@ -60,7 +59,7 @@ namespace CalcEval
         else
         {
             // '+', '-', '*', '/', etc
-            std::pair<char, TokenType> symbol{readSymbol()};
+            const std::pair<char, TokenType> symbol{readSymbol()};
             if (symbol.second != TokenType::Bad)
             {
                 return Token{
@@ -100,7 +99,7 @@ namespace CalcEval
     {
         // We have at least one std::isalpha here.
         std::string val{};
-        int next{-1};
+        int next;
         do
         {
             char c = ' ';
@@ -119,7 +118,7 @@ namespace CalcEval
     std::string Scanner::readDigit()
     {
         double val{0};
-        std::istream::pos_type aPos{m_stream.tellg()};
+        const std::istream::pos_type aPos{m_stream.tellg()};
 
         // First see if we can read a double.
         if (m_stream >> val)
@@ -138,7 +137,7 @@ namespace CalcEval
 
             if (bPos > aPos)
             {
-                std::istream::pos_type length{bPos - aPos};
+                const std::istream::pos_type length{bPos - aPos};
                 std::string str(length, '\0');
                 m_stream.seekg(aPos);
                 m_stream.read(&str[0], length);
@@ -161,7 +160,7 @@ namespace CalcEval
                 std::pair{'*', TokenType::Multiply},  std::pair{'/', TokenType::Divide},
                 std::pair{'^', TokenType::Power},     std::pair{'(', TokenType::LeftParen},
                 std::pair{')', TokenType::RightParen}};
-            auto found = std::find_if(toMatch.cbegin(), toMatch.cend(),
+            const auto found = std::find_if(toMatch.cbegin(), toMatch.cend(),
                                       [&](const auto& pair) { return pair.first == symbol; });
             if (found != toMatch.cend())
                 return *found;
@@ -187,7 +186,7 @@ namespace CalcEval
         }
 
         // Find '\n' or beginning
-        int prevChar{0};
+        int prevChar;
         std::istream::pos_type currPos{pos};
         do
         {
@@ -200,7 +199,7 @@ namespace CalcEval
         // Could find "end" here as well to get the whole line instead of just the beginning.
 
         // Retrieve line
-        std::istream::pos_type length{pos - currPos};
+        const std::istream::pos_type length{pos - currPos};
         std::string line(length, '\0');
         m_stream.seekg(currPos);
         m_stream.read(&line[0], length);
