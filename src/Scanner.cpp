@@ -139,7 +139,7 @@ namespace CalcEval
             if (bPos > aPos)
             {
                 const std::istream::pos_type length{bPos - aPos};
-                std::string str(length, '\0');
+                std::string str(static_cast<std::size_t>(length), '\0');
                 m_stream.seekg(aPos);
                 m_stream.read(&str[0], length);
                 m_cLoc.column += static_cast<std::size_t>(length);
@@ -201,7 +201,7 @@ namespace CalcEval
 
         // Retrieve line
         const std::istream::pos_type length{pos - currPos};
-        std::string line(length, '\0');
+        std::string line(static_cast<std::size_t>(length), '\0');
         m_stream.seekg(currPos);
         m_stream.read(&line[0], length);
 
