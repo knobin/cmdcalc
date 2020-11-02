@@ -9,7 +9,10 @@
 #include "calceval/Parser.hpp"
 
 // Catch2 Headers
-#include "catch2/catch_all.hpp"
+#include "catch2/catch_test_macros.hpp"
+
+// C++ Headers
+#include <sstream>
 
 TEST_CASE("Constructors")
 {
