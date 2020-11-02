@@ -87,7 +87,38 @@ namespace CalcEval
         @param  type    TokenType to convert
         @return         string format of TokenType
     */
-    [[nodiscard]] constexpr std::string_view tokenStr(TokenType type);
+    [[nodiscard]] constexpr std::string_view tokenStr(TokenType type)
+    {
+        switch (type)
+        {
+            case TokenType::Bad:
+                return "bad";
+            case TokenType::Number:
+                return "number";
+            case TokenType::Identifier:
+                return "identifier";
+            case TokenType::Plus:
+                return "plus";
+            case TokenType::Minus:
+                return "minus";
+            case TokenType::Multiply:
+                return "multiply";
+            case TokenType::Divide:
+                return "divide";
+            case TokenType::Power:
+                return "power";
+            case TokenType::LeftParen:
+                return "left paren";
+            case TokenType::RightParen:
+                return "right paren";
+            case TokenType::EndMark:
+                return "end of file";
+            case TokenType::EndOfLine:
+                return "end of line";
+        }
+
+        return "<unknown>";
+    }
 
     /** operator<< overload to print the Token.
 

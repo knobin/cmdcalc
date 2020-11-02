@@ -10,6 +10,7 @@
 
 // C++ Headers
 #include <array>
+#include <algorithm>
 #include <utility>
 
 namespace CalcEval
