@@ -18,7 +18,7 @@ namespace CalcEval
         Object that implements the logic for the calculator syntax.
         Throws ParserError when an error is encountered.
 
-        Logic is:
+        Grammar is:
         <expr> ::= <term><expr_tail>
 
         <expr_tail> ::= +<term><expr_tail>
