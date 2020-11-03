@@ -13,6 +13,7 @@
 
 // C++ Headers
 #include <istream>
+#include <optional>
 
 namespace CalcEval
 {
@@ -74,7 +75,7 @@ namespace CalcEval
 
             @return     true if newline was encountered
         */
-        bool ignoreWhitespaces();
+        std::optional<TokenType> ignoreWhitespaces();
 
         /** Function to read identifiers from the istream.
 

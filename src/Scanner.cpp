@@ -19,14 +19,10 @@ namespace CalcEval
     {
         m_next = m_stream.peek();
 
-        if (m_stream.eof() || m_next < 0)
+        if (auto type = ignoreWhitespaces())
         {
-            return Token{TokenType::EndMark, m_cLoc, ""};
-        }
-
-        if (ignoreWhitespaces())
-        {
-            return Token(TokenType::EndOfLine, m_cLoc, "");
+            // EndMark or EndOfLine returned
+            return Token{*type, m_cLoc, ""};
         }
 
         if (std::isalpha(m_next))
@@ -75,7 +71,7 @@ namespace CalcEval
         return Token{TokenType::Bad, m_cLoc, ""};
     }
 
-    bool Scanner::ignoreWhitespaces()
+    std::optional<TokenType> Scanner::ignoreWhitespaces()
     {
         while (std::isspace(m_next))
         {
@@ -87,13 +83,18 @@ namespace CalcEval
                 m_cLoc.column = 0;
                 ++m_cLoc.line;
                 m_stream.ignore(1, '\n');
-                return true;
+                return TokenType::EndOfLine;
             }
 
             m_next = m_stream.peek();
         }
 
-        return false;
+        if (m_stream.eof() || m_next < 0)
+        {
+            return TokenType::EndMark;
+        }
+
+        return std::nullopt;
     }
 
     std::string Scanner::readIdentifier()
