@@ -173,7 +173,7 @@ namespace CalcEval
 
     void Scanner::error(const std::string& unexpected, const Location& location) const
     {
-        throw ScannerError(errorMsg(unexpected, currentLine(), location));
+        throw ScannerError(currentLine(), location, unexpected);
     }
 
     std::string Scanner::currentLine() const
@@ -195,6 +195,8 @@ namespace CalcEval
             m_stream.seekg(-1, std::istream::cur);
             currPos = m_stream.tellg();
             prevChar = m_stream.get();
+            if (prevChar == '\n')
+                currPos = m_stream.tellg();
             m_stream.seekg(-1, std::istream::cur);
         } while (prevChar != '\n' && currPos > 0);
 
@@ -209,18 +211,6 @@ namespace CalcEval
         m_stream.seekg(pos); // return to old pos
 
         return line;
-    }
-
-    std::string errorMsg(const std::string& unexpected, const std::string& line,
-                         const Location& location)
-    {
-        return {"Unexpected " + unexpected + " at line " + std::to_string(location.line) + " : " +
-                std::to_string(location.column) + "\n" + errorFromLine(line, location.column)};
-    }
-
-    std::string errorFromLine(const std::string& line, std::size_t at)
-    {
-        return line + '\n' + ((at > 1) ? std::string(at - 1, '-') : "") + "^\n";
     }
 
 } // namespace CalcEval

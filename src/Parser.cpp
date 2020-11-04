@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "calceval/Parser.hpp"
+#include "calceval/Error.hpp"
 
 // C++ Headers
 #include <array>
@@ -196,7 +197,7 @@ namespace CalcEval
 
         // Is str a function?
         const auto found = std::find_if(funcArr.cbegin(), funcArr.cend(),
-                                  [&](const auto& pair) { return pair.first == str; });
+                                        [&](const auto& pair) { return pair.first == str; });
         if (found != funcArr.cend())
         {
             if (m_token.type == TokenType::LeftParen)
@@ -217,9 +218,10 @@ namespace CalcEval
 
     void Parser::error(const Token& token, const std::string& expected) const
     {
-        const std::string unexpected{"token of \"" + std::string{tokenStr(token.type)} + "\""};
-        throw ParserError(errorMsg(unexpected, m_scanner.currentLine(), token.location) +
-                          ((!expected.empty()) ? "Expected " + expected + "!" : ""));
+        const std::string unexpectedMsg{"token of \"" + std::string{tokenStr(token.type)} + "\""};
+        const std::string expectedMsg{(!expected.empty()) ? "Expected " + expected + "!" : ""};
+        throw ParserError(m_scanner.currentLine(), token.location, unexpectedMsg, expectedMsg,
+                          token);
     }
 
 } // namespace CalcEval

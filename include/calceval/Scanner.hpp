@@ -9,6 +9,7 @@
 #define CALCEVAL_SCANNER_HPP
 
 // Local Headers
+#include "calceval/Error.hpp"
 #include "calceval/Token.hpp"
 
 // C++ Headers
@@ -118,33 +119,18 @@ namespace CalcEval
         int m_next{-1};        // Next char in the istream
     };
 
-    /** Function to construct an error message.
-
-        @param  unexpected      what was unexpected
-        @param  line            the line that it was encountered on
-        @param  location        the location it was encountered on
-        @return                 error message
-    */
-    std::string errorMsg(const std::string& unexpected, const std::string& line,
-                         const Location& location);
-
-    /** Function to construct an error message based on the line.
-
-        @param  line    the line that it was encountered on
-        @param  at      the location it was encountered on
-        @return         error message
-    */
-    std::string errorFromLine(const std::string& line, std::size_t at);
-
     /** ScannerError class implementation.
 
         Object that is thrown when the Scanner encounters an error.
         Use the ScannerError.what() function for details.
     */
-    class ScannerError : public std::logic_error
+    class ScannerError : public Error
     {
     public:
-        using std::logic_error::logic_error;
+        ScannerError(const std::string& line, Location location, const std::string& unexpected)
+            : Error(line, location, unexpected)
+        {
+        }
     };
 
 } // namespace CalcEval

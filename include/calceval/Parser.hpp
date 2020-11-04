@@ -9,6 +9,7 @@
 #define CALCEVAL_PARSER_HPP
 
 // Local Headers
+#include "calceval/Error.hpp"
 #include "calceval/Scanner.hpp"
 
 namespace CalcEval
@@ -151,10 +152,22 @@ namespace CalcEval
         Object that is thrown when the Parser encounters an error.
         Use the ParserError.what() function for details.
     */
-    class ParserError : public std::logic_error
+    class ParserError : public Error
     {
     public:
-        using std::logic_error::logic_error;
+        ParserError(const std::string& line, Location location, const std::string& unexpected,
+                    const std::string& expected, const Token& token)
+            : Error(line, location, unexpected, expected), m_token{token}
+        {
+        }
+
+        [[nodiscard]] Token token() const noexcept
+        {
+            return m_token;
+        }
+
+    private:
+        Token m_token;
     };
 
 } // namespace CalcEval
