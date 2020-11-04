@@ -1,4 +1,6 @@
 # cmdCalc
+[![Build Status](https://travis-ci.org/knobin/cmdcalc.svg?branch=main)](https://travis-ci.org/knobin/cmdcalc)
+
 Command-line calculator in C++ using Top-Down Parsing implemented in C++17.
 
 ## Build
