@@ -143,7 +143,7 @@ namespace CalcEval
                 std::string str(static_cast<std::size_t>(length), '\0');
                 m_stream.seekg(aPos);
                 m_stream.read(&str[0], length);
-                m_cLoc.column += static_cast<std::size_t>(length);
+                m_cLoc.column += static_cast<Location::value_type>(length);
                 return str;
             }
         }

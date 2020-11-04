@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15.7)
+cmake_minimum_required(VERSION 3.12.4)
 project(CalcEval-tests)
 
 set(CALC_INCLUDE "${CMAKE_SOURCE_DIR}/include")

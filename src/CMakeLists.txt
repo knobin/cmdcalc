@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15.7)
+cmake_minimum_required(VERSION 3.12.4)
 project(CalcEval)
 
 # Source files
@@ -10,6 +10,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include"
 
 # Compiler flags
 if (MSVC)
+    string(REGEX REPLACE "/W[3|4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     target_compile_options(${PROJECT_NAME} PUBLIC /permissive- /W4 /w14640)
 else()
     target_compile_options(${PROJECT_NAME} PUBLIC
