@@ -27,7 +27,7 @@ namespace CalcEval
 
         if (std::isalpha(m_next))
         {
-            const std::size_t col{m_cLoc.column};
+            const Location::value_type col{m_cLoc.column};
             const std::string identifier{readIdentifier()};
             if (!identifier.empty())
             {
@@ -41,7 +41,7 @@ namespace CalcEval
         }
         else if (std::isdigit(m_next))
         {
-            const std::size_t col{m_cLoc.column};
+            const Location::value_type col{m_cLoc.column};
             const std::string digit{readDigit()};
             if (!digit.empty())
             {

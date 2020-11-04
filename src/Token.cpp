@@ -10,8 +10,13 @@
 
 namespace CalcEval
 {
+    Token::Token()
+        : value{""}, location{-1, -1}, type{TokenType::Bad}
+    {
+    }
+
     Token::Token(TokenType type, const Location& loc, const std::string& value)
-        : type{type}, value{value}, location{loc}
+        : value{value}, location{loc}, type{type}
     {
     }
 

@@ -21,8 +21,10 @@ namespace CalcEval
     */
     struct Location
     {
-        std::size_t line;
-        std::size_t column;
+        using value_type = int32_t;
+
+        value_type line;
+        value_type column;
     };
 
     /** TokenType enum class implementation.
@@ -54,13 +56,15 @@ namespace CalcEval
     class Token
     {
     public:
-        /** Default Token constructor is disabled.
+        /** Default Token constructor .
 
-            For now, it must be initialized.
-            In the future this might change to initialize it with
-            TokenType::Bad.
+            type = TokenType::Bad
+            location = {-1, -1}
+            value = ""
+
+            @return     default initialized Token
         */
-        Token() = delete;
+        Token();
 
         /** Default Token constructor with type, loc and value.
 
@@ -77,9 +81,9 @@ namespace CalcEval
         */
         void print(std::ostream& os) const;
 
-        TokenType type;
         std::string value;
         Location location;
+        TokenType type;
     };
 
     /** Function for converting the TokenType to a string format.

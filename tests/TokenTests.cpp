@@ -19,6 +19,15 @@ TEST_CASE("Constructors")
 {
     SECTION("Token")
     {
+        CalcEval::Token token{};
+        REQUIRE(token.type == CalcEval::TokenType::Bad);
+        REQUIRE(token.location.line == -1);
+        REQUIRE(token.location.column == -1);
+        REQUIRE(token.value == "");
+    }
+
+    SECTION("Token with arguments")
+    {
         CalcEval::Token token{CalcEval::TokenType::Identifier, {20, 25}, "test"};
         REQUIRE(token.type == CalcEval::TokenType::Identifier);
         REQUIRE(token.location.line == 20);
