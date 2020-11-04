@@ -1,5 +1,5 @@
 //
-//  TokenTests.hpp
+//  tests/TokenTests.hpp
 //  CalcEval
 //
 //  Created by Robin Gustafsson on 2020-11-02.
