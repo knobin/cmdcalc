@@ -23,10 +23,10 @@ The `cmdCalc` can be used in two ways, either with REPL:
 
 ```shell
 $ ./cmdCalc
-> 1+2+3+4
-10
-> 1.05*20
-21
+> 1+2+3+4*10/8
+11
+> 1+3-(-5)*4^2+pi+log10(10)
+88.1416
 ```
 
 or by providing command-line arguments:
@@ -80,38 +80,58 @@ The calculator can understand numbers, symbolic constants, single-argument funct
         |   <unary>
 
 <unary> ::= -<value>
-        |	<value>
+        |   <value>
 
 <value> ::= ( <expr> )
-        | 	<id>
-        | 	num
+        |   <id>
+        |   num
 
 <id> ::= function <value>
-        | 	constant
+        |   constant
 ```
 
 ### Symbolic constants
 Currently supported constants are: 
 
-Constant | implemented value
+Constant | Implementation
 --- | ---
 pi | 3.14159265
 e | 2.71828183
 
+Example usage:
+
+```shell
+$ ./cmdCalc
+> 2*pi*5
+31.4159
+> e^e
+15.1543
+```
+
 ### Single-argument functions
 The implemented functions are:
 
-Function | using
---- | ---
-log | std::log
-log10 | std::log10
-exp | std::exp
-sin | std::sin
-cos | std::cos
-tan | std::tan
-arcsin | std::asin
-arccos | std::acos
-arctan | std::atan
+Function | Implementation | Computes
+--- | --- | ---
+log | std::log | Natural (base-e) logarithm of arg
+log10 | std::log10 | Common (base-10) logarithm of arg
+exp | std::exp | e raised to the power of arg
+sin | std::sin | Sine of arg (in radians)
+cos | std::cos | Cosine  of arg (in radians)
+tan | std::tan | Tangent of arg (in radians)
+arcsin | std::asin | Principal value of the arc sine of arg
+arccos | std::acos | Principal value of the arc cosine of arg
+arctan | std::atan | Principal value of the arc tangent of arg
+
+Example usage:
+
+```shell
+$ ./cmdCalc
+> log(10)
+2.30259
+> cos(pi)
+-1
+```
 
 ## License
 See [MIT License](LICENSE).
