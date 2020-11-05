@@ -34,7 +34,9 @@ namespace CalcEval
 
     std::string errorLineMsg(const std::string& line, Location::value_type at)
     {
-        return line + '\n' + ((at > 1) ? std::string(at - 1, '-') : "") + "^";
+        std::ostringstream oss{};
+        oss << line << '\n' << ((at > 1) ? std::string(static_cast<std::size_t>(at - 1), '-') : "") << '^';
+        return oss.str();
     }
 
     std::string errorMsg(const std::string& unexpected, const std::string& line,

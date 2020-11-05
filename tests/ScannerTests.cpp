@@ -59,7 +59,7 @@ TEST_CASE("Expected input")
         CalcEval::Scanner scanner{iss};
 
         constexpr std::array<std::string_view, 3> match{"ident", "ident123", "i1den2t3"};
-        for (std::size_t i{3}; i < 3; ++i)
+        for (std::size_t i{0}; i < 3; ++i)
         {
             const CalcEval::Token token{scanner.scan()};
             REQUIRE(CalcEval::TokenType::Identifier == token.type);
@@ -74,7 +74,7 @@ TEST_CASE("Expected input")
         CalcEval::Scanner scanner{iss};
 
         constexpr std::array<std::string_view, 2> match{"123", "123.001"};
-        for (int i{0}; i < 2; ++i)
+        for (std::size_t i{0}; i < 2; ++i)
         {
             const CalcEval::Token token{scanner.scan()};
             REQUIRE(CalcEval::TokenType::Number == token.type);
