@@ -10,8 +10,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/include"
 
 # Compiler flags
 if (MSVC)
-    string(REGEX REPLACE "/W[3|4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    target_compile_options(${PROJECT_NAME} PUBLIC /permissive- /W4 /w14640)
+    string(REGEX REPLACE "/W[3|4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    target_compile_options(${PROJECT_NAME} PUBLIC /permissive- /w14640)
 else()
     target_compile_options(${PROJECT_NAME} PUBLIC
             -Wall -Wextra -Wpedantic -fvisibility=hidden -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align

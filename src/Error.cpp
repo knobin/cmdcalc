@@ -32,7 +32,7 @@ namespace CalcEval
 
     ///////////////////////////////////////////////////////////////////////////////
 
-    std::string errorLineMsg(const std::string& line, std::size_t at)
+    std::string errorLineMsg(const std::string& line, Location::value_type at)
     {
         return line + '\n' + ((at > 1) ? std::string(at - 1, '-') : "") + "^";
     }
