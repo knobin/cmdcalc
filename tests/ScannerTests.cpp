@@ -14,10 +14,7 @@
 // C++ Headers
 #include <array>
 #include <algorithm>
-#include <ctime>
 #include <sstream>
-#include <random>
-#include <iostream>
 
 TEST_CASE("Expected input")
 {
@@ -128,24 +125,15 @@ bool valid(int c)
     return false;
 }
 
-int randomASCII()
-{
-    const unsigned int time_ui{static_cast<unsigned int>(time(nullptr))};
-    static std::default_random_engine eng{time_ui};
-    static std::uniform_int_distribution<int> dist{32, 126};
-    return dist(eng);
-}
-
 TEST_CASE("Unexpected input")
 {
-    SECTION("Random characters")
+    SECTION("invalid characters")
     {
-        for (int i{0}; i < 1000; ++i)
+        for (int i{0}; i < 128; ++i)
         {
-            int c{randomASCII()};
-            std::istringstream iss{std::string{static_cast<char>(c)}};
+            std::istringstream iss{std::string{static_cast<char>(i)}};
             CalcEval::Scanner scanner{iss};
-            if (!valid(c))
+            if (!valid(i))
             {
                 REQUIRE_THROWS_AS(scanner.scan(), CalcEval::ScannerError);
             }
