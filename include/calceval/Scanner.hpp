@@ -33,16 +33,21 @@ namespace CalcEval
         */
         Scanner() = delete;
 
-        /** Default Scanner constructor with is.
+        /** Scanner constructor with iss.
 
-            If std::cin is passed it will cause issues, the scanner
-            cannot handle it properly for now. Only time this kind of
-            works is if std::cin has values in it already.
-
-            @param  is      stream to scan
+            @param  iss     istringstream to use
             @return         default initialized Scanner
         */
-        explicit Scanner(std::istream& is) : m_stream{is}
+        explicit Scanner(std::istringstream& iss) : m_stream{reinterpret_cast<std::istream&>(iss)}
+        {
+        }
+
+        /** Scanner constructor with ifs.
+
+            @param  is      ifstream to use
+            @return         default initialized Scanner
+        */
+        explicit Scanner(std::ifstream& ifs) : m_stream{reinterpret_cast<std::istream&>(ifs)}
         {
         }
 
@@ -63,7 +68,7 @@ namespace CalcEval
         /** Function to retrieve the current line from the istream.
 
             This will seek back to either the start or '\n' and
-            gather everything from that to the current position.
+            gather everything from that position to the current position.
 
             @return     line
         */

@@ -12,6 +12,10 @@
 #include "calceval/Error.hpp"
 #include "calceval/Scanner.hpp"
 
+// C++ Headers
+#include <fstream>
+#include <sstream>
+
 namespace CalcEval
 {
     /** Parser class implementation.
@@ -33,37 +37,43 @@ namespace CalcEval
             |   <empty>
 
         <factor> ::= <unary> ^ <unary>
-                |	<unary>
+            |   <unary>
 
         <unary> ::= -<value>
-                |	<value>
+            |   <value>
 
         <value> ::= ( <expr> )
-                | 	<id>
-                | 	num
+            |   <id>
+            |   num
 
         <id> ::= function <value>
-                | 	constant
+            |   constant
     */
     class Parser
     {
     public:
         /** Default Parser constructor is disabled.
-
+         *
             For now, it must be initialized with an istream.
             Might change in the future though.
         */
         Parser() = delete;
 
-        /** Default Parser constructor with is.
+        /** Parser constructor with iss.
 
-            If std::cin is passed it will cause issues, for details
-            look in the Scanner.hpp file.
-
-            @param  is      stream to scan
+            @param  iss     istringstream to use
             @return         default initialized Parser
         */
-        explicit Parser(std::istream& is) : m_scanner{is}
+        explicit Parser(std::istringstream& iss) : m_scanner{iss}
+        {
+        }
+
+        /** Parser constructor with ifs.
+
+            @param  ifs     ifstream to use
+            @return         default initialized Parser
+        */
+        explicit Parser(std::ifstream& ifs) : m_scanner{ifs}
         {
         }
 
