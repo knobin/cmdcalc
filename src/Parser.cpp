@@ -193,7 +193,7 @@ namespace CalcEval
             std::pair{"tan", [](double x) { return std::tan(x); }},
             std::pair{"arcsin", [](double x) { return std::asin(x); }},
             std::pair{"arccos", [](double x) { return std::acos(x); }},
-            std::pair{"atan", [](double x) { return std::atan(x); }}};
+            std::pair{"arctan", [](double x) { return std::atan(x); }}};
 
         // Is str a function?
         const auto found = std::find_if(funcArr.cbegin(), funcArr.cend(),
