@@ -78,8 +78,11 @@ The calculator can understand numbers, symbolic constants, single-argument funct
         |   /<factor><term_tail>
         |   <empty>
 
-<factor> ::= <unary> ^ <unary>
-        |   <unary>
+<factor> ::= -<value><factor_term>
+        |   <value><factor_term>
+
+<factor_term> ::= ^<unary><factor_term>
+        |   <empty>
 
 <unary> ::= -<value>
         |   <value>

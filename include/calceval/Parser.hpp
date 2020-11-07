@@ -36,8 +36,11 @@ namespace CalcEval
             |   /<factor><term_tail>
             |   <empty>
 
-        <factor> ::= <unary> ^ <unary>
-            |   <unary>
+        <factor> ::= -<value><factor_term>
+	    |   <value><factor_term>
+
+        <factor_term> ::= ^<unary><factor_term>
+            |   <empty>
 
         <unary> ::= -<value>
             |   <value>
@@ -121,11 +124,17 @@ namespace CalcEval
         */
         double termTail(double lhs);
 
-        /** Function for the term_tail.
+        /** Function for the factor.
 
             @return     resulting value
         */
         double factor();
+
+        /** Function for the factor_tail.
+
+            @return     resulting value
+        */
+        double factorTail(double lhs);
 
         /** Function for the unary.
 

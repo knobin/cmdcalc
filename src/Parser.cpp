@@ -103,16 +103,34 @@ namespace CalcEval
         return val;
     }
 
-    // <factor> ::= <unary> ^ <unary>
-    //      |	<unary>
+    // <factor> ::= -<value><factor_term>
+    //      |   <value><factor_term>
     double Parser::factor()
     {
-        double val{unary()};
+        int8_t multi{1};
+
+        if (m_token.type == TokenType::Minus)
+        {
+            scan();
+            multi = -1;
+        }
+
+        const double lhs{value()};
+        return factorTail(lhs) * multi;
+    }
+
+    // <factor_term> ::= ^<unary><factor_term>
+    //      |   <empty>
+    double Parser::factorTail(double lhs)
+    {
+
+        double val{lhs};
 
         if (m_token.type == TokenType::Power)
         {
             scan();
             val = std::pow(val, unary());
+            return factorTail(val);
         }
 
         return val;
