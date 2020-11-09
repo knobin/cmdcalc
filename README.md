@@ -1,7 +1,7 @@
 # cmdCalc
 [![Build Status](https://travis-ci.org/knobin/cmdcalc.svg?branch=main)](https://travis-ci.org/knobin/cmdcalc)
 
-Command-line calculator in C++ using Top-Down Parsing implemented in C++17.
+Command-line calculator in C++17 using Top-Down Parsing.
 
 ## Build
 Start by cloning the repository:
@@ -78,14 +78,12 @@ The calculator can understand numbers, symbolic constants, single-argument funct
         |   /<factor><term_tail>
         |   <empty>
 
-<factor> ::= -<value><factor_term>
-        |   <value><factor_term>
+<factor> ::= -<value><factor_tail>
+        |   <value><factor_tail>
 
-<factor_term> ::= ^<unary><factor_term>
+<factor_tail> ::= ^-<value><factor_tail>
+        |   ^<value><factor_tail>
         |   <empty>
-
-<unary> ::= -<value>
-        |   <value>
 
 <value> ::= ( <expr> )
         |   <id>
