@@ -36,14 +36,12 @@ namespace CalcEval
             |   /<factor><term_tail>
             |   <empty>
 
-        <factor> ::= -<value><factor_term>
-	    |   <value><factor_term>
+        <factor> ::= -<value><factor_tail>
+	    |   <value><factor_tail>
 
-        <factor_term> ::= ^<unary><factor_term>
+        <factor_tail> ::= ^-<value><factor_tail>
+            |   ^<value><factor_tail>
             |   <empty>
-
-        <unary> ::= -<value>
-            |   <value>
 
         <value> ::= ( <expr> )
             |   <id>
@@ -135,12 +133,6 @@ namespace CalcEval
             @return     resulting value
         */
         double factorTail(double lhs);
-
-        /** Function for the unary.
-
-            @return     resulting value
-        */
-        double unary();
 
         /** Function for the value.
 
