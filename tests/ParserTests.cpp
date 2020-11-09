@@ -52,7 +52,7 @@ TEST_CASE("Symbolic constant")
         REQUIRE(evaluate("-pi", -3.14159265));
     }
 
-    SECTION("Double")
+    SECTION("e")
     {
         REQUIRE(evaluate("e", 2.71828183));
         REQUIRE(evaluate("-e", -2.71828183));
@@ -324,4 +324,17 @@ TEST_CASE("Exponentiation")
         REQUIRE(evaluate("-2^2^-2^2", -1.0442737824));
         REQUIRE(evaluate("-2^-2^-2^-2", -0.558296565));
     }
+}
+
+TEST_CASE("PEMDAS")
+{
+    REQUIRE(evaluate("4*(5+3)", 32.0));
+    REQUIRE(evaluate("5*2^2", 20.0));
+    REQUIRE(evaluate("2+5*3", 17.0));
+    REQUIRE(evaluate("30/5*3", 18.0));
+    REQUIRE(evaluate("3+6*2", 15.0));
+    REQUIRE(evaluate("12/6*3/2", 3.0));
+    REQUIRE(evaluate("20*2-(1/2)*9.8*2^2", 20.4));
+    REQUIRE(evaluate("4^3^2", 262144.0));
+    REQUIRE(evaluate("7+(6*5^2+3)", 160.0));
 }
