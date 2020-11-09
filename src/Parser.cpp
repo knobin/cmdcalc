@@ -17,6 +17,14 @@
 
 namespace CalcEval
 {
+    Parser::Parser(std::istringstream& iss) : m_scanner{iss}
+    {
+    }
+
+    Parser::Parser(std::ifstream& ifs) : m_scanner{ifs}
+    {
+    }
+
     void Parser::scan()
     {
         do

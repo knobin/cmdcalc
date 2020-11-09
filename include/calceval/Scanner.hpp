@@ -31,25 +31,21 @@ namespace CalcEval
             For now, it must be initialized with an istream.
             Might change in the future though.
         */
-        Scanner() = delete;
+        //Scanner() = delete;
 
         /** Scanner constructor with iss.
 
             @param  iss     istringstream to use
             @return         default initialized Scanner
         */
-        explicit Scanner(std::istringstream& iss) : m_stream{reinterpret_cast<std::istream&>(iss)}
-        {
-        }
+        explicit Scanner(std::istringstream& iss);
 
         /** Scanner constructor with ifs.
 
             @param  is      ifstream to use
             @return         default initialized Scanner
         */
-        explicit Scanner(std::ifstream& ifs) : m_stream{reinterpret_cast<std::istream&>(ifs)}
-        {
-        }
+        explicit Scanner(std::ifstream& ifs);
 
         /** Function to scan the istream.
 

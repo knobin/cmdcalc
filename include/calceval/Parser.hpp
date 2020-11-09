@@ -65,18 +65,14 @@ namespace CalcEval
             @param  iss     istringstream to use
             @return         default initialized Parser
         */
-        explicit Parser(std::istringstream& iss) : m_scanner{iss}
-        {
-        }
+        explicit Parser(std::istringstream& iss);
 
         /** Parser constructor with ifs.
 
             @param  ifs     ifstream to use
             @return         default initialized Parser
         */
-        explicit Parser(std::ifstream& ifs) : m_scanner{ifs}
-        {
-        }
+        explicit Parser(std::ifstream& ifs);
 
         /** Function for parsing the istream in the scanner.
 

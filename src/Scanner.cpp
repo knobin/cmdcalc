@@ -9,12 +9,20 @@
 #include "calceval/Scanner.hpp"
 
 // C++ Headers
-#include <array>
 #include <algorithm>
+#include <array>
 #include <utility>
 
 namespace CalcEval
 {
+    Scanner::Scanner(std::istringstream& iss) : m_stream{reinterpret_cast<std::istream&>(iss)}
+    {
+    }
+
+    Scanner::Scanner(std::ifstream& ifs) : m_stream{reinterpret_cast<std::istream&>(ifs)}
+    {
+    }
+
     Token Scanner::scan()
     {
         m_next = m_stream.peek();
@@ -163,7 +171,7 @@ namespace CalcEval
                 std::pair{'^', TokenType::Power},     std::pair{'(', TokenType::LeftParen},
                 std::pair{')', TokenType::RightParen}};
             const auto found = std::find_if(toMatch.cbegin(), toMatch.cend(),
-                                      [&](const auto& pair) { return pair.first == symbol; });
+                                            [&](const auto& pair) { return pair.first == symbol; });
             if (found != toMatch.cend())
                 return *found;
         }
