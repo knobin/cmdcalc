@@ -27,8 +27,11 @@ TEST_CASE("Expected input")
 
     SECTION("No whitespaces")
     {
-        constexpr std::string_view expr{"1.0id+-*/^()"};
-        std::istringstream iss{std::string{expr}};
+        // This will actually fail in macOS mojave with AppleClang due to a bug in LLVM.
+        // It will fail to read the double 1.0 and return a "bad" token.
+        // Apparently it cannot read a double that is followed by letters in a stream.
+        // Should probably fix this.
+        std::istringstream iss{"1.0id+-*/^()"};
         CalcEval::Scanner scanner{iss};
         for (CalcEval::TokenType type : sequence)
         {
@@ -39,8 +42,7 @@ TEST_CASE("Expected input")
 
     SECTION("With whitespaces")
     {
-        constexpr std::string_view expr{" 1.0 id + - * / ^ ( ) "};
-        std::istringstream iss{std::string{expr}};
+        std::istringstream iss{" 1.0 id + - * / ^ ( ) "};
         CalcEval::Scanner scanner{iss};
         for (CalcEval::TokenType type : sequence)
         {
@@ -51,8 +53,7 @@ TEST_CASE("Expected input")
 
     SECTION("Identifier")
     {
-        constexpr std::string_view expr{"ident ident123 i1den2t3"};
-        std::istringstream iss{std::string{expr}};
+        std::istringstream iss{"ident ident123 i1den2t3"};
         CalcEval::Scanner scanner{iss};
 
         constexpr std::array<std::string_view, 3> match{"ident", "ident123", "i1den2t3"};
@@ -66,8 +67,7 @@ TEST_CASE("Expected input")
 
     SECTION("Number")
     {
-        constexpr std::string_view expr{"123 123.001"};
-        std::istringstream iss{std::string{expr}};
+        std::istringstream iss{"123 123.001"};
         CalcEval::Scanner scanner{iss};
 
         constexpr std::array<std::string_view, 2> match{"123", "123.001"};
