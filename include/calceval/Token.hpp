@@ -132,6 +132,14 @@ namespace CalcEval
     */
     std::ostream& operator<<(std::ostream& os, const Token& token);
 
+    // Comparison operators for Location.
+    bool operator==(const Location& lhs, const Location& rhs);
+    bool operator!=(const Location& lhs, const Location& rhs);
+
+    // Comparison operators for Token.
+    bool operator==(const Token& lhs, const Token& rhs);
+    bool operator!=(const Token& lhs, const Token& rhs);
+
 } // namespace CalcEval
 
 #endif // CALCEVAL_TOKEN_HPP

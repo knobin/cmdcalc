@@ -62,6 +62,48 @@ TEST_CASE("Constructors")
     }
 }
 
+TEST_CASE("Location comparison operators")
+{
+    const CalcEval::Location l1{1, 5};
+    const CalcEval::Location l2{5, 1};
+
+    SECTION("Equal")
+    {
+        REQUIRE_FALSE(l1 == l2);
+        REQUIRE_FALSE(l2 == l1);
+        REQUIRE(l1 == l1);
+    }
+
+    SECTION("Not equal")
+    {
+        REQUIRE(l1 != l2);
+        REQUIRE(l2 != l1);
+        REQUIRE_FALSE(l1 != l1);
+    }
+}
+
+TEST_CASE("Token comparison operators")
+{
+    const CalcEval::Location l1{1, 5};
+    const CalcEval::Location l2{5, 1};
+    const CalcEval::Token t1{CalcEval::TokenType::Plus, l1, "+"};
+    const CalcEval::Token t2{CalcEval::TokenType::Number, l2, "2"};
+
+    SECTION("Equal")
+    {
+        REQUIRE_FALSE(t1 == t2);
+        REQUIRE_FALSE(t2 == t1);
+        REQUIRE(t1 == t1);
+    }
+
+    SECTION("Not equal")
+    {
+        REQUIRE(t1 != t2);
+        REQUIRE(t2 != t1);
+        REQUIRE_FALSE(t1 != t1);
+    }
+}
+
 TEST_CASE("Assignment")
 {
     SECTION("Copy")
