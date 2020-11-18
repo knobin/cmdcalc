@@ -10,6 +10,7 @@
 
 // Catch2 Headers
 #include "catch2/catch_test_macros.hpp"
+#include "catch2/matchers/catch_matchers_exception.hpp"
 
 // C++ Headers
 #include <array>
@@ -80,36 +81,62 @@ TEST_CASE("Expected input")
     }
 }
 
-TEST_CASE("Current line")
+TEST_CASE("Scanned")
 {
-    SECTION("One line")
+    std::istringstream iss{"123+123"};
+    CalcEval::Scanner scanner{iss};
+    CalcEval::Token token{scanner.scan()};
+    REQUIRE(scanner.scanned() == "123");
+    token = scanner.scan();
+    REQUIRE(scanner.scanned() == "123+");
+    token = scanner.scan();
+    REQUIRE(scanner.scanned() == "123+123");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Location")
+{
+    SECTION("Single line")
     {
-        std::istringstream iss{"test 1234 - * 1 +"};
+        std::istringstream iss{"123 + 123"};
         CalcEval::Scanner scanner{iss};
-        CalcEval::Token token{scanner.scan()};
-        REQUIRE(token.value == "test");
-        token = scanner.scan();
-        REQUIRE(token.value == "1234");
-        REQUIRE(scanner.currentLine() == "test 1234");
+
+        constexpr std::array<std::pair<CalcEval::TokenType,CalcEval::Location>, 3> match{
+            std::pair{CalcEval::TokenType::Number, CalcEval::Location{1,4}},
+            std::pair{CalcEval::TokenType::Plus, CalcEval::Location{1,6}},
+            std::pair{CalcEval::TokenType::Number, CalcEval::Location{1,10}}
+        };
+
+        for (const auto& [tokenType, location] : match)
+        {
+            REQUIRE(scanner.scan().type == tokenType);
+            REQUIRE(scanner.location() == location);
+        }
     }
 
-    SECTION("Multi line")
+    SECTION("Multiple lines")
     {
-        std::istringstream iss{"test \n 1234 \n - * 1 +"};
+        std::istringstream iss{"123\n + \n123"};
         CalcEval::Scanner scanner{iss};
-        CalcEval::Token token{scanner.scan()};
-        REQUIRE(token.value == "test");
-        token = scanner.scan();
-        token = scanner.scan();
-        REQUIRE(token.value == "1234");
-        token = scanner.scan();
-        token = scanner.scan();
-        REQUIRE(token.value == "-");
-        token = scanner.scan();
-        REQUIRE(token.value == "*");
-        REQUIRE(scanner.currentLine() == " - *");
+
+        constexpr std::array<std::pair<CalcEval::TokenType,CalcEval::Location>, 5> match{
+            std::pair{CalcEval::TokenType::Number, CalcEval::Location{1,4}},
+            std::pair{CalcEval::TokenType::EndOfLine, CalcEval::Location{2,1}},
+            std::pair{CalcEval::TokenType::Plus, CalcEval::Location{2,2}},
+            std::pair{CalcEval::TokenType::EndOfLine, CalcEval::Location{3,1}},
+            std::pair{CalcEval::TokenType::Number, CalcEval::Location{3,3}}
+        };
+
+        for (const auto& [tokenType, location] : match)
+        {
+            REQUIRE(scanner.scan().type == tokenType);
+            REQUIRE(scanner.location() == location);
+        }
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 bool valid(int c)
 {
@@ -127,7 +154,7 @@ bool valid(int c)
 
 TEST_CASE("Unexpected input")
 {
-    SECTION("invalid characters")
+    SECTION("Invalid characters")
     {
         for (int i{0}; i < 128; ++i)
         {

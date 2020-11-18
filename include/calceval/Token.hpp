@@ -132,6 +132,14 @@ namespace CalcEval
     */
     std::ostream& operator<<(std::ostream& os, const Token& token);
 
+    /** operator<< overload to print the Location.
+
+        @param os       ostream to output to
+        @param token    location to print
+        @return         ostream
+    */
+    std::ostream& operator<<(std::ostream& os, const Location& location);
+
     // Comparison operators for Location.
     bool operator==(const Location& lhs, const Location& rhs);
     bool operator!=(const Location& lhs, const Location& rhs);

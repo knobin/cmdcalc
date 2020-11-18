@@ -50,25 +50,22 @@ namespace CalcEval
         else if (std::isdigit(m_next))
         {
             const Location::value_type col{m_cLoc.column};
-            const std::string digit{readDigit()};
-            if (!digit.empty())
+            if (auto digit = readDigit())
             {
                 if (std::isdigit(m_stream.peek()))
                 {
                     error("digit", m_cLoc);
                 }
 
-                return Token(TokenType::Number, {m_cLoc.line, col}, digit);
+                return {TokenType::Number, {m_cLoc.line, col}, *digit};
             }
         }
-        else
+        else if (auto symbol = readSymbol())
         {
-            // '+', '-', '*', '/', etc
-            const std::pair<char, TokenType> symbol{readSymbol()};
-            if (symbol.second != TokenType::Bad)
+            if (symbol->second != TokenType::Bad)
             {
                 return Token{
-                    symbol.second, {m_cLoc.line, m_cLoc.column - 1}, std::string{symbol.first}};
+                    symbol->second, {m_cLoc.line, m_cLoc.column - 1}, std::string{symbol->first}};
             }
             else
             {
@@ -88,7 +85,7 @@ namespace CalcEval
 
             if (m_next == '\n')
             {
-                m_cLoc.column = 0;
+                m_cLoc.column = 1;
                 ++m_cLoc.line;
                 m_stream.ignore(1, '\n');
                 return TokenType::EndOfLine;
@@ -125,7 +122,7 @@ namespace CalcEval
         return val;
     }
 
-    std::string Scanner::readDigit()
+    std::optional<std::string> Scanner::readDigit()
     {
         double val{0};
         const std::istream::pos_type aPos{m_stream.tellg()};
@@ -156,10 +153,10 @@ namespace CalcEval
             }
         }
 
-        return "";
+        return std::nullopt;
     }
 
-    std::pair<char, TokenType> Scanner::readSymbol()
+    std::optional<std::pair<char, TokenType>> Scanner::readSymbol()
     {
         char symbol{};
         if (m_stream >> symbol)
@@ -174,51 +171,64 @@ namespace CalcEval
                                             [&](const auto& pair) { return pair.first == symbol; });
             if (found != toMatch.cend())
                 return *found;
+
+            return std::pair{symbol, TokenType::Bad};
         }
 
-        return {symbol, TokenType::Bad};
+        return std::nullopt;
+    }
+
+    std::istream& Scanner::stream() const
+    {
+        return m_stream;
+    }
+
+    static std::istream::pos_type getStreamPos(std::istream& is)
+    {
+        std::istream::pos_type pos{is.tellg()};
+
+        // Assuming if pos is -1 that the stream is passed the end.
+        if (pos == -1)
+        {
+            is.clear();
+            is.seekg(0, std::istream::end);
+            pos = is.tellg();
+        }
+
+        return pos;
+    }
+
+    std::string Scanner::scanned() const
+    {
+        const std::istream::pos_type currentPos{getStreamPos(m_stream)};
+        const std::size_t length{static_cast<std::size_t>(currentPos)};
+        std::string line(length, '\0');
+
+        m_stream.clear();
+        m_stream.seekg(std::ios::beg);
+        m_stream.read(&line[0], length);
+
+        m_stream.clear();
+        m_stream.seekg(currentPos); // return to old pos
+
+        return line;
+    }
+
+    const Location& Scanner::location() const
+    {
+        return m_cLoc;
     }
 
     void Scanner::error(const std::string& unexpected, const Location& location) const
     {
-        throw ScannerError(currentLine(), location, unexpected);
-    }
+        std::string content{scanned()};
+        std::size_t start{0};
+        const std::size_t findLast{content.find_last_of('\n')};
+        if (findLast != std::string::npos)
+            start = findLast + 1;
 
-    std::string Scanner::currentLine() const
-    {
-        // Save current position
-        std::istream::pos_type pos{m_stream.tellg()};
-        if (pos == -1)
-        {
-            m_stream.clear();
-            m_stream.seekg(0, std::istream::end);
-            pos = m_stream.tellg();
-        }
-
-        // Find '\n' or beginning
-        int prevChar;
-        std::istream::pos_type currPos{pos};
-        do
-        {
-            m_stream.seekg(-1, std::istream::cur);
-            currPos = m_stream.tellg();
-            prevChar = m_stream.get();
-            if (prevChar == '\n')
-                currPos = m_stream.tellg();
-            m_stream.seekg(-1, std::istream::cur);
-        } while (prevChar != '\n' && currPos > 0);
-
-        // Could find "end" here as well to get the whole line instead of just the beginning.
-
-        // Retrieve line
-        const std::istream::pos_type length{pos - currPos};
-        std::string line(static_cast<std::size_t>(length), '\0');
-        m_stream.seekg(currPos);
-        m_stream.read(&line[0], length);
-
-        m_stream.seekg(pos); // return to old pos
-
-        return line;
+        const std::string line{content.substr(start)};
+        throw ScannerError(line, location, unexpected);
     }
 
 } // namespace CalcEval

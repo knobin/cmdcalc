@@ -20,6 +20,8 @@ namespace CalcEval
     class Error : public std::logic_error
     {
     public:
+        using std::logic_error::logic_error;
+
         Error(const std::string& line, Location location, const std::string& unexpected,
               const std::string& expected = "");
 
@@ -31,24 +33,6 @@ namespace CalcEval
         std::string m_line;
         Location m_loc;
     };
-
-    /** Function to construct an error message based on the line.
-
-        @param  line    the line that it was encountered on
-        @param  at      the location it was encountered on
-        @return         error message
-    */
-    std::string errorLineMsg(const std::string& line, std::size_t at);
-
-    /** Function to construct an error message.
-
-       @param  unexpected      what was unexpected
-       @param  line            the line that it was encountered on
-       @param  location        the location it was encountered on
-       @return                 error message
-   */
-    std::string errorMsg(const std::string& unexpected, const std::string& line,
-                         const Location& location, const std::string& expected);
 
 } // namespace CalcEval
 

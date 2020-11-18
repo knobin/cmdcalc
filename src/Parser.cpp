@@ -7,7 +7,6 @@
 
 // Local Headers
 #include "calceval/Parser.hpp"
-#include "calceval/Error.hpp"
 
 // C++ Headers
 #include <array>
@@ -237,8 +236,15 @@ namespace CalcEval
     {
         const std::string unexpectedMsg{"token of \"" + std::string{tokenStr(token.type)} + "\""};
         const std::string expectedMsg{(!expected.empty()) ? "Expected " + expected + "!" : ""};
-        throw ParserError(m_scanner.currentLine(), token.location, unexpectedMsg, expectedMsg,
-                          token);
+
+        const std::string content{m_scanner.scanned()};
+        std::size_t start{0};
+        const std::size_t findLast{content.find_last_of('\n')};
+        if (findLast != std::string::npos)
+            start = findLast + 1;
+
+        const std::string line{content.substr(start)};
+        throw ParserError(line, token.location, unexpectedMsg, expectedMsg, token);
     }
 
 } // namespace CalcEval

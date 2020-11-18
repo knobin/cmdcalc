@@ -12,6 +12,7 @@
 #include "catch2/catch_approx.hpp"
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/matchers/catch_matchers_exception.hpp"
+#include <catch2/matchers/catch_matchers_templated.hpp>
 
 // C++ Headers
 #include <cmath>
@@ -336,6 +337,37 @@ TEST_CASE("PEMDAS")
     REQUIRE(parse("7+(6*5^2+3)") == Catch::Approx(160.0));
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+class ParseErrorMatcher : public Catch::Matchers::MatcherGenericBase
+{
+public:
+    ParseErrorMatcher(const CalcEval::Token& token, const std::string msg)
+        : m_token{token}, m_msg{msg}
+    {}
+
+    bool match(const CalcEval::ParserError& in) const
+    {
+        return ( (in.token() == m_token) && (in.what() == m_msg) );
+    }
+
+    std::string describe() const override
+    {
+        std::ostringstream oss{};
+        oss << m_token;
+        return "Equals: " + oss.str() + " and " + m_msg;
+    }
+
+private:
+    const CalcEval::Token m_token;
+    const std::string m_msg;
+};
+
+ParseErrorMatcher EqualsPE(const CalcEval::Token& token, const std::string& msg)
+{
+    return ParseErrorMatcher{token, msg};
+}
+
 TEST_CASE("Unexpected input")
 {
     SECTION("Symbol")
@@ -359,18 +391,22 @@ TEST_CASE("Unexpected input")
     {
         const std::string msg1{"Unexpected token of \"end of file\" at line 1 : "
                                "3\n2+\n--^\nExpected '(', identifier or number!"};
-        REQUIRE_THROWS_MATCHES(parse("2+"), CalcEval::ParserError, Catch::Matchers::Message(msg1));
+        const CalcEval::Token t1{CalcEval::TokenType::EndMark, {1, 3}, ""};
+        REQUIRE_THROWS_MATCHES(parse("2+"), CalcEval::ParserError, EqualsPE(t1, msg1));
 
         const std::string msg2{"Unexpected token of \"plus\" at line 1 : "
                                "1\n+\n^\nExpected '(', identifier or number!"};
-        REQUIRE_THROWS_MATCHES(parse("+2"), CalcEval::ParserError, Catch::Matchers::Message(msg2));
+        const CalcEval::Token t2{CalcEval::TokenType::Plus, {1, 1}, "+"};
+        REQUIRE_THROWS_MATCHES(parse("+2"), CalcEval::ParserError, EqualsPE(t2, msg2));
 
         const std::string msg3{"Unexpected token of \"plus\" at line 1 : "
                                "3\n2++\n--^\nExpected '(', identifier or number!"};
-        REQUIRE_THROWS_MATCHES(parse("2++2"), CalcEval::ParserError, Catch::Matchers::Message(msg3));
+        const CalcEval::Token t3{CalcEval::TokenType::Plus, {1, 3}, "+"};
+        REQUIRE_THROWS_MATCHES(parse("2++2"), CalcEval::ParserError, EqualsPE(t3, msg3));
 
         const std::string msg4{"Unexpected token of \"minus\" at line 1 : "
                                "2\n--\n-^\nExpected '(', identifier or number!"};
-        REQUIRE_THROWS_MATCHES(parse("--3"), CalcEval::ParserError, Catch::Matchers::Message(msg4));
+        const CalcEval::Token t4{CalcEval::TokenType::Minus, {1, 2}, "-"};
+        REQUIRE_THROWS_MATCHES(parse("--3"), CalcEval::ParserError, EqualsPE(t4, msg4));
     }
 }

@@ -31,7 +31,7 @@ namespace CalcEval
             For now, it must be initialized with an istream.
             Might change in the future though.
         */
-        //Scanner() = delete;
+        Scanner() = delete;
 
         /** Scanner constructor with iss.
 
@@ -47,28 +47,39 @@ namespace CalcEval
         */
         explicit Scanner(std::ifstream& ifs);
 
-        /** Function to scan the istream.
+        /** Function to scan the istream and return a token.
 
             If the scanner encounters any value from std::isspace it is
             ignored. Otherwise it returns a token when it finds a valid
             input. If any invalid input is found it will return either
             a token of TokenType::Bad or throw a ScannerError.
 
-            A bad token should never be returned.
             ScannerError can be thrown at any time.
 
             @return     token
         */
         [[nodiscard]] Token scan();
 
-        /** Function to retrieve the current line from the istream.
+        /** Retrieve the istream.
 
-            This will seek back to either the start or '\n' and
-            gather everything from that position to the current position.
-
-            @return     line
+            @return     istream
         */
-        [[nodiscard]] std::string currentLine() const;
+        [[nodiscard]] std::istream& stream() const;
+
+        /** Retrieve the scanned content.
+
+            @return     scanned content
+        */
+        [[nodiscard]] std::string scanned() const;
+
+        /** Retrieve the location to be scanned.
+
+            Note: This is the location to BE scanned and not the
+            last scanned location.
+
+            @return     location to be scanned
+        */
+        [[nodiscard]] const Location& location() const;
 
     private:
         /** Function to ignoring the whitespaces in the istream.
@@ -96,7 +107,7 @@ namespace CalcEval
 
             @return     string with the identifier, empty if some error occurred
         */
-        std::string readDigit();
+        std::optional<std::string> readDigit();
 
         /** Function to read a symbol from the istream.
 
@@ -105,7 +116,7 @@ namespace CalcEval
 
             @return     char with associated TokenType, Bad if error
         */
-        std::pair<char, TokenType> readSymbol();
+        std::optional<std::pair<char, TokenType>> readSymbol();
 
         /** Function to throw an error.
 
@@ -128,10 +139,7 @@ namespace CalcEval
     class ScannerError : public Error
     {
     public:
-        ScannerError(const std::string& line, Location location, const std::string& unexpected)
-            : Error(line, location, unexpected)
-        {
-        }
+        using Error::Error;
     };
 
 } // namespace CalcEval

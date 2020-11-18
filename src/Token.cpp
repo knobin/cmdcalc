@@ -35,6 +35,12 @@ namespace CalcEval
         return os;
     }
 
+    std::ostream& operator<<(std::ostream& os, const Location& location)
+    {
+        os << "{ line: " << location.line << ", column: " << location.column << " }";
+        return os;
+    }
+
     bool operator==(const Location& lhs, const Location& rhs)
     {
         return ((lhs.line == rhs.line) && (lhs.column == rhs.column));
