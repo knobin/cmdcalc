@@ -36,4 +36,5 @@ endfunction()
 define_test(NAME TokenTest FILES TokenTests.cpp LINKS CalcEval)
 define_test(NAME ScannerTest FILES ScannerTests.cpp LINKS CalcEval)
 define_test(NAME ParserTest FILES ParserTests.cpp LINKS CalcEval)
+define_test(NAME OrderTest FILES OrderTests.cpp LINKS CalcEval)
 
