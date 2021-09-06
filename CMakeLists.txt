@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 option(BUILD_TESTS "Build test programs" ON)
 
 # Library
-add_subdirectory(${CMAKE_SOURCE_DIR}/src)
+add_subdirectory(${CMAKE_SOURCE_DIR}/calceval)
 
 # App
 add_subdirectory(${CMAKE_SOURCE_DIR}/app)

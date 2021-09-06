@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.12.4)
 project(CalcEval-tests)
 
-set(CALC_INCLUDE "${CMAKE_SOURCE_DIR}/include")
-set(CALC_SRC "${CMAKE_SOURCE_DIR}/src")
+set(CALC_INCLUDE "${CMAKE_SOURCE_DIR}/calceval/include")
+set(CALC_SRC "${CMAKE_SOURCE_DIR}/calceval/src")
 
 # Function for define tests.
 function(define_test)
