@@ -167,10 +167,10 @@ namespace CalcEval
                 std::pair{'*', TokenType::Multiply},  std::pair{'/', TokenType::Divide},
                 std::pair{'^', TokenType::Power},     std::pair{'(', TokenType::LeftParen},
                 std::pair{')', TokenType::RightParen}};
-            const auto found = std::find_if(toMatch.cbegin(), toMatch.cend(),
+            const auto search = std::find_if(toMatch.cbegin(), toMatch.cend(),
                                             [&](const auto& pair) { return pair.first == symbol; });
-            if (found != toMatch.cend())
-                return *found;
+            if (search != toMatch.cend())
+                return *search;
 
             return std::pair{symbol, TokenType::Bad};
         }
@@ -201,12 +201,11 @@ namespace CalcEval
     std::string Scanner::scanned() const
     {
         const std::istream::pos_type currentPos{getStreamPos(m_stream)};
-        const std::size_t length{static_cast<std::size_t>(currentPos)};
-        std::string line(length, '\0');
+        std::string line(static_cast<std::size_t>(currentPos), '\0');
 
         m_stream.clear();
         m_stream.seekg(std::ios::beg);
-        m_stream.read(&line[0], length);
+        m_stream.read(&line[0], currentPos);
 
         m_stream.clear();
         m_stream.seekg(currentPos); // return to old pos

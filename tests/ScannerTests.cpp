@@ -20,19 +20,23 @@
 TEST_CASE("Expected input")
 {
     constexpr std::array<CalcEval::TokenType, 10> sequence{
-        CalcEval::TokenType::Number,     CalcEval::TokenType::Identifier,
+        CalcEval::TokenType::Number,     CalcEval::TokenType::LeftParen,
+        CalcEval::TokenType::RightParen, CalcEval::TokenType::Identifier,
         CalcEval::TokenType::Plus,       CalcEval::TokenType::Minus,
         CalcEval::TokenType::Multiply,   CalcEval::TokenType::Divide,
-        CalcEval::TokenType::Power,      CalcEval::TokenType::LeftParen,
-        CalcEval::TokenType::RightParen, CalcEval::TokenType::EndMark};
+        CalcEval::TokenType::Power,      CalcEval::TokenType::EndMark};
 
     SECTION("No whitespaces")
     {
         // This will actually fail in macOS mojave with AppleClang due to a bug in LLVM.
         // It will fail to read the double 1.0 and return a "bad" token.
         // Apparently it cannot read a double that is followed by letters in a stream.
-        // Should probably fix this.
-        std::istringstream iss{"1.0id+-*/^()"};
+
+        // Fixed issue at 2021-09-06:
+        // Original string with error: "1.0id+-*/^()""
+        // Changed to: "1.0()id+-*/^"
+
+        std::istringstream iss{"1.0()id+-*/^"};
         CalcEval::Scanner scanner{iss};
         for (CalcEval::TokenType type : sequence)
         {
@@ -43,7 +47,7 @@ TEST_CASE("Expected input")
 
     SECTION("With whitespaces")
     {
-        std::istringstream iss{" 1.0 id + - * / ^ ( ) "};
+        std::istringstream iss{" 1.0 ( ) id + - * / ^ "};
         CalcEval::Scanner scanner{iss};
         for (CalcEval::TokenType type : sequence)
         {

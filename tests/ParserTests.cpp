@@ -18,11 +18,10 @@
 #include <cmath>
 #include <sstream>
 
-double parse(const std::string& expr)
+static double parse(const std::string& expr)
 {
-    std::istringstream iss{expr};
-    CalcEval::Parser parser{iss};
-    return parser.parse();
+    CalcEval::Parser parser{};
+    return parser.parse(expr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

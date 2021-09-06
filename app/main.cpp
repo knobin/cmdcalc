@@ -10,9 +10,8 @@ std::optional<double> parse(const std::string& expr)
 {
     try
     {
-        std::istringstream iss{expr};
-        CalcEval::Parser parser{iss};
-        return parser.parse();
+        CalcEval::Parser parser{};
+        return parser.parse(expr);
     }
     catch (CalcEval::ParserError& e)
     {
@@ -40,7 +39,7 @@ int main(int argc, char* argv[])
             {
                 std::cout << *val << std::endl;
             }
-            std::cout << "> " << std::flush;;
+            std::cout << "> " << std::flush;
         }
 
         std::cout << std::endl;
