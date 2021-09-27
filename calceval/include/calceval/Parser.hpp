@@ -10,11 +10,11 @@
 
 // Local Headers
 #include "calceval/ParserLogic.hpp"
-#include "calceval/type/Double.hpp"
+#include "calceval/type/Standard.hpp"
 
 namespace CalcEval
 {
-    template<typename CalcType = Type::Double>
+    template<typename CalcType = Type::Standard>
     class Parser
     {
     public:
